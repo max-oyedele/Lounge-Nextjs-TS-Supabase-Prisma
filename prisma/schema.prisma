@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique @map("user_id") @db.Uuid
+  name      String?
+  email     String   @unique
+  image     String?
+  role      Role     @default(GUEST)
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("users")
+}
+
+model Section {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  price     Float?
+  image     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("sections")
+}
+
+model Package {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  maxPeople Int      @map("max_people")
+  price     Float?
+  gratuity  Float?
+  packageProducts  PackageProduct[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("packages")
+}
+
+model PackageProduct {
+  package   Package  @relation(fields: [packageId], references: [id])
+  packageId Int      @map("package_id")
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int      @map("product_id")
+  count     Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@id([packageId, productId])
+  @@map("packages_products")
+}
+
+model Product {
+  id        Int             @id @default(autoincrement())
+  name      String?
+  type      ProductType
+  price     Float?
+  image     String?
+  productPackages PackageProduct[]
+  options   ProductOption[]
+  isDeleted Boolean         @default(false) @map("is_deleted")
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @default(now()) @map("updated_at")
+
+  @@map("products")
+}
+
+model ProductOption {
+  id        Int      @id @default(autoincrement())
+  name      String
+  price     Float?
+  balance   Int?     @default(0)
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int      @map("product_id")
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("product_options")
+}
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  userId          Int?          @map("user_id")
+  sectionId       Int           @map("section_id")
+  packageId       Int           @map("package_id")
+  people          Int?
+  date            String?
+  serverId        Int?          @map("server_id")
+  price           Float?
+  paypalOrderId   String?       @map("paypal_order_id")
+  paypalPayerId   String?       @map("paypal_payer_id")
+  stripeCustomer  String?       @map("stripe_customer")
+  stripePaymentId String?       @map("stripe_payment_id")
+  orderDetails    OrderDetail[]
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @default(now()) @map("updated_at")
+
+  @@map("orders")
+}
+
+model OrderDetail {
+  id                  Int      @id @default(autoincrement())
+  order               Order    @relation(fields: [orderId], references: [id])
+  orderId             Int      @map("order_id")
+  productId           Int?     @map("product_id")
+  productOptionId     Int?     @map("product_option_id")
+  productOptionAmount Int?     @default(1) @map("product_option_amount")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @default(now()) @map("updated_at")
+
+  @@map("order_details")
+}
+
+enum Role {
+  GUEST
+  SERVER
+  ADMIN
+}
+
+enum ProductType {
+  BOTTLE
+  HOOKAH
+}

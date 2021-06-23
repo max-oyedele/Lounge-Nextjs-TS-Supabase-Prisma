@@ -1,0 +1,30 @@
+@tailwind base;
+
+/* Start purging... */
+@tailwind components;
+/* Stop purging. */
+
+/* Start purging... */
+@tailwind utilities;
+/* Stop purging. */
+
+/* Your own custom utilities */
+span {
+  @apply text-gray-800
+}
+
+button:focus {
+  outline: none
+}
+
+button:disabled {
+  cursor: not-allowed
+}
+
+input:not(#remember_me) {
+  border: none !important
+}
+
+input:focus {
+  outline: none !important
+}

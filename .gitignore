@@ -1,0 +1,17 @@
+node_modules/
+
+prisma/.env
+.next/
+.vercel
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

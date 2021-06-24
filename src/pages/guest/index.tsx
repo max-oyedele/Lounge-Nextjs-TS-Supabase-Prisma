@@ -21,6 +21,7 @@ const IndexPage = (props) => {
   const [selectedSection, setSelectedSection] = useState(null)
   const [selectedPackage, setSelectedPackage] = useState(null)
   const [selectedPeople, setSelectedPeople] = useState()
+  const [selectedProductIds, setSelectedProductIds] = useState([])
   const [selectedProductOptionIds, setSelectedProductOptionIds] = useState([])
 
   const [validReserved, setValidReserved] = useState(false)
@@ -54,11 +55,11 @@ const IndexPage = (props) => {
       }
 
       let newOrderDetails = []
-      selectedProductOptionIds.forEach((id) => {
+      selectedProductIds.forEach((id) => {
         newOrderDetails.push({
           productId: productOptions?.find((e) => e.id === id)?.productId,
-          productOptionId: id,
-          productOptionAmount: 1,
+          // productOptionId: id,
+          // productOptionAmount: 1,
         })
       })
 
@@ -135,6 +136,8 @@ const IndexPage = (props) => {
                 setSelectedPackage={setSelectedPackage}
                 selectedPeople={selectedPeople}
                 setSelectedPeople={setSelectedPeople}
+                selectedProductIds={[...selectedProductIds]}
+                setSelectedProductIds={setSelectedProductIds}
                 selectedProductOptionIds={[...selectedProductOptionIds]}
                 setSelectedProductOptionIds={setSelectedProductOptionIds}
               />

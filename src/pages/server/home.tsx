@@ -168,7 +168,6 @@ const Home = (props) => {
                   selectedDate={selectedDate}
                   selectedSection={selectedSection}
                   selectedPackage={selectedPackage}
-                  selectedPeople={selectedPeople}
                   guestNames={guestNames}
                   orderDetails={orderDetails}
                   setConfirmModal={setConfirmModal}

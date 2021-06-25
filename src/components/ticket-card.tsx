@@ -8,7 +8,6 @@ const TicketCard = (props) => {
     selectedDate,
     selectedSection,
     selectedPackage,
-    selectedPeople,
     guestNames,
     orderDetails,
     setConfirmModal,

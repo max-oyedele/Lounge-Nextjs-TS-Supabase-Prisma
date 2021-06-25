@@ -4,7 +4,7 @@ const SectionCard = (props) => {
 
   return (
     <div
-      className={`grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 border rounded-xl transition duration-200 ease-in-out transform hover:-translate-y-1 hover:scale-105 ${
+      className={`grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 border border-gray-300 rounded-xl transition duration-200 ease-in-out transform hover:-translate-y-1 hover:scale-105 ${
         reserved ? 'cursor-not-allowed' : 'cursor-pointer'
       }`}
       onClick={() => {

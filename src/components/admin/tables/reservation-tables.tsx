@@ -49,7 +49,7 @@ export const ReservationTable = (props) => {
       },
       {
         id: 'people',
-        displayName: 'People Number',
+        displayName: 'People',
       },
       {
         id: 'product',

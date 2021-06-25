@@ -49,7 +49,7 @@ export const MySalesTable = (props) => {
       },
       {
         id: 'people',
-        displayName: 'People Number',
+        displayName: 'People',
       },
     ]
 

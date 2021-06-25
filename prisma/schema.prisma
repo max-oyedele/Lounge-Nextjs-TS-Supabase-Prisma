@@ -92,7 +92,7 @@ model Order {
   userId          Int?          @map("user_id")
   sectionId       Int           @map("section_id")
   packageId       Int           @map("package_id")
-  people          Int?
+  people          String?
   date            String?
   serverId        Int?          @map("server_id")
   price           Float?

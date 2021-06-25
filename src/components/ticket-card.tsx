@@ -9,6 +9,7 @@ const TicketCard = (props) => {
     selectedSection,
     selectedPackage,
     selectedPeople,
+    guestNames,
     orderDetails,
     setConfirmModal,
     paymentWithStripe,
@@ -16,67 +17,59 @@ const TicketCard = (props) => {
 
   return (
     <div className="flex flex-col items-center">
-      <span className="text-xl font-bold">~ Reservation ~</span>
-      <div className="flex space-x-2">
-        <div className="flex flex-col items-end">
-          <span className="block h-6 text-md mt-4">Date:</span>
-          <span className="block h-6 text-md mt-4">Email Account:</span>
-          <span className="block h-6 text-md mt-4">Section:</span>
-          <span className="block h-6 text-md mt-4">Package:</span>
-          <span className="block h-6 text-md mt-4">Number of Guests:</span>
-          <span className="block h-6 text-md mt-4">Products:</span>
-          <span className="block h-6 text-md mt-4">Price:</span>
-          <span className="block h-6 text-md mt-4">Gratuity:</span>
-          <span className="block h-6 text-md mt-4">Total:</span>
-          {/* {selectedPackage?.packageProducts?.map((item, index) => {
-            const isProductSelected = orderDetails.filter((e) => e.productId === item.product.id).length > 0
-            if (!isProductSelected) return null
-            return (
-              <span key={index} className="block h-6 text-md capitalize mt-4">
-                {item.product.name}:
-              </span>
-            )
-          })} */}
-        </div>
-        <div className="flex flex-col font-semibold">
-          <span className="block h-6 text-md mt-4">{moment(selectedDate).format('yyyy-MM-DD')}</span>
-          <span className="block h-6 text-md mt-4">{user.email}</span>
-          <span className="block h-6 text-md mt-4 capitalize">{selectedSection?.name}</span>
-          <span className="block h-6 text-md mt-4 capitalize">{selectedPackage?.name}</span>
-          <span className="block h-6 text-md mt-4">{selectedPeople}</span>
-          <div className="h-6 flex items-center mt-4">
-            {selectedPackage?.packageProducts?.map((item, index) => {
-              const isProductSelected = orderDetails.filter((e) => e.productId === item.product.id).length > 0
-              if (!isProductSelected) return null
-              return (
-                <div key={index} className="text-md capitalize truncate mx-1 px-1 border rounded-md">
-                  {item.product.name}
-                </div>
-              )
-            })}
+      <span className="text-xl font-bold mb-6">~ Reservation ~</span>
+      <div className="w-full grid grid-cols-6 gap-2">
+        <div className="col-span-2 flex justify-end text-md text-gray-800">Date:</div>
+        <div className="col-span-4 text-md text-gray-800">{moment(selectedDate).format('yyyy-MM-DD')}</div>
+      </div>
+      <div className="w-full grid grid-cols-6 gap-2 mt-4">
+        <div className="col-span-2 flex justify-end text-md text-gray-800">Email:</div>
+        <div className="col-span-4 text-md text-gray-800">{user.email}</div>
+      </div>
+      <div className="w-full grid grid-cols-6 gap-2 mt-4">
+        <div className="col-span-2 flex justify-end text-md text-gray-800">Section:</div>
+        <div className="col-span-4 text-md text-gray-800">{selectedSection?.name}</div>
+      </div>
+      <div className="w-full grid grid-cols-6 gap-2 mt-4">
+        <div className="col-span-2 flex justify-end text-md text-gray-800">Package:</div>
+        <div className="col-span-4 text-md text-gray-800">{selectedPackage?.name}</div>
+      </div>
+      <div className="w-full grid grid-cols-6 gap-2 mt-4">
+        <div className="col-span-2 flex justify-end text-md text-gray-800">Guests:</div>
+        <div className="col-span-4 text-md text-gray-800">{guestNames.filter((e) => e !== undefined).join(', ')}</div>
+      </div>
+      {selectedPackage?.packageProducts?.map((item, index) => {
+        const isProductSelected = orderDetails.filter((e) => e.productId === item.product.id).length > 0
+        if (!isProductSelected) return null
+        return (
+          <div key={index} className="w-full grid grid-cols-6 gap-2 mt-4">
+            <div className="col-span-2 flex justify-end text-md text-gray-800 capitalize">{item.product.name}:</div>
+            <div className="col-span-4 flex text-md text-gray-800">
+              {item.product.options.map((option, index) => {
+                const isProductOptionSelected = orderDetails.filter((e) => e.productOptionId === option.id).length > 0
+                if (!isProductOptionSelected) return null
+                return (
+                  <div key={index} className="text-md text-gray-800 capitalize truncate mr-1 px-1 border rounded-md">
+                    {option.name}
+                  </div>
+                )
+              })}
+            </div>
           </div>
-          <span className="block h-6 text-md mt-4">{getFormatPrice(selectedPackage?.price, 'USD')}</span>
-          <span className="block h-6 text-md mt-4 capitalize">{selectedPackage?.gratuity}%</span>
-          <span className="block h-6 text-md mt-4">
-            {getFormatPrice(selectedPackage?.price + (selectedPackage?.price * selectedPackage?.gratuity) / 100, 'USD')}
-          </span>
-          {/* {selectedPackage?.packageProducts?.map((item, index) => {
-            const isProductSelected = orderDetails.filter((e) => e.productId === item.product.id).length > 0
-            if (!isProductSelected) return null
-            return (
-              <div key={index} className="h-6 flex items-center mt-4">
-                {item.product.options.map((option, index) => {
-                  const isProductOptionSelected = orderDetails.filter((e) => e.productOptionId === option.id).length > 0
-                  if (!isProductOptionSelected) return null
-                  return (
-                    <div key={index} className="text-md capitalize truncate mx-1 px-1 border rounded-md">
-                      {option.name}
-                    </div>
-                  )
-                })}
-              </div>
-            )
-          })} */}
+        )
+      })}
+      <div className="w-full grid grid-cols-6 gap-2 mt-4">
+        <div className="col-span-2 flex justify-end text-md text-gray-800">Price:</div>
+        <div className="col-span-4 text-md text-gray-800">{getFormatPrice(selectedPackage?.price, 'USD')}</div>
+      </div>
+      <div className="w-full grid grid-cols-6 gap-2 mt-4">
+        <div className="col-span-2 flex justify-end text-md text-gray-800">Gratuity:</div>
+        <div className="col-span-4 text-md text-gray-800">{selectedPackage?.gratuity}%</div>
+      </div>
+      <div className="w-full grid grid-cols-6 gap-2 mt-4">
+        <div className="col-span-2 flex justify-end text-md text-gray-800">Total:</div>
+        <div className="col-span-4 text-md text-gray-800">
+          {getFormatPrice(selectedPackage?.price + (selectedPackage?.price * selectedPackage?.gratuity) / 100, 'USD')}
         </div>
       </div>
 

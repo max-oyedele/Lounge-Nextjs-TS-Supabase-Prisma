@@ -5,6 +5,8 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { fetchGetJSON, fetchPostJSON } from 'libs/api-helpers'
 
+import Loading from 'components/loading'
+
 const StripeResultPage: NextPage = () => {
   const router = useRouter()
 
@@ -28,15 +30,15 @@ const StripeResultPage: NextPage = () => {
         stripePaymentId: data.id,
         stripeCustomer: data.customer_details?.email,
       }
-      
+
       fetchPostJSON('/api/createOrder', {
         order: orderWithPayment,
       })
-      .then(async (res) => {
-        // console.log('create order res', res)
-        if (res.error) {
-          setDbError(res.error)
-        } else if (newOrderDetails) {
+        .then(async (res) => {
+          // console.log('create order res', res)
+          if (res.error) {
+            setDbError(res.error)
+          } else if (newOrderDetails) {
             let orderDetailsWithOrderId = []
             const orderDetails = JSON.parse(newOrderDetails)
             orderDetails.forEach((e) => orderDetailsWithOrderId.push({ ...e, orderId: res.id }))
@@ -62,11 +64,8 @@ const StripeResultPage: NextPage = () => {
   }
 
   return (
-    <div className="">
-      {/* <h1>Checkout Payment Result</h1>
-      <h2>Status: {data?.payment_intent?.status ?? 'loading...'}</h2>
-      <h3>CheckoutSession response:</h3>
-      <pre>{JSON.stringify(data ?? 'loading', null, 2)}</pre> */}
+    <div className="">      
+      {(!error && !dbError) && <Loading loading={true} />}
       {error && error}
       {dbError && dbError}
     </div>

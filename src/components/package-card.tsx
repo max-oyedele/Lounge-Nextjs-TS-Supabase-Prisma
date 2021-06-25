@@ -7,6 +7,8 @@ const PackageCard = (props) => {
     setSelectedPackage,
     selectedPeople,
     setSelectedPeople,
+    guestNames,
+    setGuestNames,
     selectedProductIds,
     setSelectedProductIds,
     selectedProductOptionIds,
@@ -37,6 +39,7 @@ const PackageCard = (props) => {
         if (selectedPackage?.id !== packageItem.id) {
           setSelectedPackage(packageItem)
           setSelectedPeople(null)
+          setGuestNames([])
           setSelectedProductIds([])
           setSelectedProductOptionIds([])
         }
@@ -44,7 +47,7 @@ const PackageCard = (props) => {
     >
       <span className={`text-3xl font-bold uppercase ${textToneColor}`}>{packageItem.name}</span>
       <hr className="w-11/12 my-2" />
-      <div className="w-full flex flex-col items-center">
+      <div className="w-full flex flex-col items-center cursor-text">
         <span className="text-lg">
           Max Number of People: <b>{packageItem.maxPeople}</b>
         </span>
@@ -72,14 +75,40 @@ const PackageCard = (props) => {
                     setSelectedPackage(packageItem)
                     setSelectedProductIds([])
                     setSelectedProductOptionIds([])
+                  } else {
                     setSelectedPeople(index + 1)
-                  } else setSelectedPeople(index + 1)
+                    setGuestNames([])
+                  }
                 }}
               >
                 {index + 1}
               </div>
             ))}
         </div>
+        {selectedPackage?.id === packageItem.id &&
+          selectedPeople &&
+          Array(selectedPeople)
+            .fill(null)
+            .map((_, index) => (
+              <div key={index} className="w-10/12 grid grid-cols-3 gap-2 mt-2">
+                <div className="col-span-1 flex justify-end items-center p-1">
+                  <span>Guest {index + 1}</span>
+                </div>
+                <div className="col-span-2 flex items-center border rounded-md p-1">
+                  <input
+                    className="w-full text-gray-800"
+                    value={guestNames[index] ?? ''}
+                    onChange={(e) => {
+                      const newGuestNames = [...guestNames]
+                      if (!e.target.value.includes(',')) {
+                        newGuestNames[index] = e.target.value
+                        setGuestNames(newGuestNames)
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
 
         <hr className="w-11/12 mt-2" />
         {packageItem.packageProducts?.map((item, index) => {
@@ -90,27 +119,26 @@ const PackageCard = (props) => {
             <div key={index} className="mt-4">
               <div className="flex justify-center items-center">
                 <div
-                  className={`flex justify-center items-center border border-gray-300 rounded-md cursor-pointer capitalize px-2 py-1 ${
+                  className={`flex justify-center items-center cursor-text capitalize px-2 py-1 ${
                     isSelected ? 'bg-green-700 text-white' : ''
                   }`}
-                  onClick={() => {
-                    const existedIndex = selectedProductIds?.findIndex((e) => e == item.product.id)
-                    if (existedIndex > -1) {
-                      // already selected => remove
-                      const newArr = selectedProductIds
-                      newArr.splice(existedIndex, 1)
-                      setSelectedProductIds(newArr)
-                    } else {
-                      // add new product
-                      const newArr = selectedProductIds
-                      setSelectedProductIds([...newArr, item.product.id])
-                    }
-                  }}
+                  // onClick={() => {
+                  //   const existedIndex = selectedProductIds?.findIndex((e) => e == item.product.id)
+                  //   if (existedIndex > -1) {
+                  //     // already selected => remove
+                  //     const newArr = selectedProductIds
+                  //     newArr.splice(existedIndex, 1)
+                  //     setSelectedProductIds(newArr)
+                  //   } else {
+                  //     // add new product
+                  //     const newArr = selectedProductIds
+                  //     setSelectedProductIds([...newArr, item.product.id])
+                  //   }
+                  // }}
                 >
                   {item.product.image && (
                     <img src={item.product.image} className="object-contain w-12 h-12 mr-2" alt="product" />
                   )}
-                  
                   {item.count} {item.product.name ?? item.product.type + (index + 1)}
                 </div>
               </div>
@@ -121,37 +149,46 @@ const PackageCard = (props) => {
                   return (
                     <div
                       key={index}
-                      className={`flex justify-center items-center rounded-md cursor-pointer capitalize m-2 px-2 py-1 ${
+                      className={`flex justify-center items-center border border-gray-300 rounded-md cursor-pointer capitalize m-2 px-2 py-1 ${
                         isSelected ? 'bg-green-700 text-white' : ''
                       }`}
-                      // onClick={() => {
-                      //   if (selectedPackage?.id !== packageItem.id) {
-                      //     setSelectedPackage(packageItem)
-                      //     setSelectedPeople(null)
-                      //     setSelectedProductIds([])
-                      //     setSelectedProductOptionIds([])
-                      //   } else {
-                      //     const existedIndex = selectedProductOptionIds?.findIndex((e) => e == option.id)
-                      //     if (existedIndex > -1) {
-                      //       // already selected => remove
-                      //       const newArr = selectedProductOptionIds
-                      //       newArr.splice(existedIndex, 1)
-                      //       setSelectedProductOptionIds(newArr)
-                      //     } else {
-                      //       //remove other option ids on the same product
-                      //       const newArr = selectedProductOptionIds
+                      onClick={() => {
+                        if (selectedPackage?.id !== packageItem.id) {
+                          setSelectedPackage(packageItem)
+                          setSelectedPeople(null)
+                          setGuestNames([])
+                          setSelectedProductIds([])
+                          setSelectedProductOptionIds([])
+                        } else {
+                          const existedIndex = selectedProductOptionIds?.findIndex((e) => e == option.id)
+                          if (existedIndex > -1) {
+                            // already selected => remove (toggle)
+                            const newArr = selectedProductOptionIds
+                            newArr.splice(existedIndex, 1)
+                            setSelectedProductOptionIds(newArr)
+                          } else {
+                            const newArr = selectedProductOptionIds
 
-                      //       item.product.options.forEach((everyOption) => {
-                      //         if (option.id != everyOption.id) {
-                      //           const everyIndex = selectedProductOptionIds?.findIndex((e) => e == everyOption.id)
-                      //           if (everyIndex > -1) newArr.splice(everyIndex, 1)
-                      //         }
-                      //       })
-                      //       //push new optionId
-                      //       setSelectedProductOptionIds([...newArr, option.id])
-                      //     }
-                      //   }
-                      // }}
+                            let selectedCountForProduct = 0
+                            item.product.options.forEach((everyOption) => {
+                              if (selectedProductOptionIds.includes(everyOption.id)) selectedCountForProduct++
+                            })
+
+                            if (selectedCountForProduct < item.count) {
+                              //push new optionId
+                              setSelectedProductOptionIds([...newArr, option.id])
+                            } else if (selectedCountForProduct == item.count) {
+                              //erase other optionIds
+                              item.product.options.forEach((everyOption) => {
+                                const everyIndex = selectedProductOptionIds?.findIndex((e) => e == everyOption.id)
+                                if (everyIndex > -1) newArr.splice(everyIndex, 1)
+                              })
+                              //push new optionId
+                              setSelectedProductOptionIds([...newArr, option.id])
+                            }
+                          }
+                        }
+                      }}
                     >
                       {option.name}
                     </div>

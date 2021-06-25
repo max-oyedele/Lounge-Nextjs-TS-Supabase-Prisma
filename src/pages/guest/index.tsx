@@ -20,7 +20,8 @@ const IndexPage = (props) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedSection, setSelectedSection] = useState(null)
   const [selectedPackage, setSelectedPackage] = useState(null)
-  const [selectedPeople, setSelectedPeople] = useState()
+  const [selectedPeople, setSelectedPeople] = useState(null)
+  const [guestNames, setGuestNames] = useState([])
   const [selectedProductIds, setSelectedProductIds] = useState([])
   const [selectedProductOptionIds, setSelectedProductOptionIds] = useState([])
 
@@ -49,17 +50,17 @@ const IndexPage = (props) => {
         userId: user.id,
         sectionId: selectedSection?.id,
         packageId: selectedPackage?.id,
-        people: selectedPeople,
+        people: guestNames.filter((e) => e !== undefined).toString(),
         date: moment(selectedDate).format('yyyy-MM-DD'),
         price: selectedPackage?.price + (selectedPackage?.price * selectedPackage?.gratuity) / 100,
       }
 
       let newOrderDetails = []
-      selectedProductIds.forEach((id) => {
+      selectedProductOptionIds.forEach((id) => {
         newOrderDetails.push({
           productId: productOptions?.find((e) => e.id === id)?.productId,
-          // productOptionId: id,
-          // productOptionAmount: 1,
+          productOptionId: id,
+          productOptionAmount: 1,
         })
       })
 
@@ -136,6 +137,8 @@ const IndexPage = (props) => {
                 setSelectedPackage={setSelectedPackage}
                 selectedPeople={selectedPeople}
                 setSelectedPeople={setSelectedPeople}
+                guestNames={guestNames}
+                setGuestNames={setGuestNames}
                 selectedProductIds={[...selectedProductIds]}
                 setSelectedProductIds={setSelectedProductIds}
                 selectedProductOptionIds={[...selectedProductOptionIds]}
@@ -163,6 +166,7 @@ const IndexPage = (props) => {
                 selectedSection={selectedSection}
                 selectedPackage={selectedPackage}
                 selectedPeople={selectedPeople}
+                guestNames={guestNames}
                 orderDetails={orderDetails}
                 setConfirmModal={setConfirmModal}
                 paymentWithStripe={paymentWithStripe}

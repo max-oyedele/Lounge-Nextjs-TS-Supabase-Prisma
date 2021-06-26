@@ -111,7 +111,7 @@ const PackageCard = (props) => {
             ))}
 
         <hr className="w-11/12 mt-2" />
-        {packageItem.packageProducts?.map((item, index) => {
+        {packageItem.packageProducts?.filter(e=>e.isDeleted === false).map((item, index) => {
           const existedIndex = selectedProductIds?.findIndex((e) => e === item.product.id)
           const isSelected = packageItem.id === selectedPackage?.id && existedIndex > -1
 

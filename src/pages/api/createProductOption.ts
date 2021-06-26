@@ -6,7 +6,7 @@ export default async function handler(req, res) {
       data: req.body.option
     })
   
-    res.status(200).json(option)
+    res.status(200).json({data: option})
   }
   catch(err){
     console.log('create product option error:', err)

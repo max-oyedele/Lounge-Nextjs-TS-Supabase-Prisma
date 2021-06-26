@@ -15,10 +15,10 @@ export const ProductTable = (props) => {
   const [filteredProducts, setFilteredProducts] = useState([])
 
   useEffect(() => {
-    filterProducts()
+    filterProductsOptions()
   }, [selectedKeyword])
 
-  const filterProducts = () => {
+  const filterProductsOptions = () => {
     let result = products
     if (selectedKeyword) {
       result = result.filter(
@@ -30,30 +30,25 @@ export const ProductTable = (props) => {
     setFilteredProducts(result)
   }
 
-  useEffect(()=>{
-    const productsForSelect = products.map(e=>{return {
-      label: e.name,
-      value: e.id
-    }})
+  useEffect(() => {
+    const productsForSelect = products?.map((e) => {
+      return {
+        label: e.name,
+        value: e.id,
+      }
+    })
     setProductsForSelect(productsForSelect)
   }, [])
 
   const [loading, setLoading] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
-  const [editProductModal, setEditProductModal] = useState(false)
-  const [editOptionModal, setEditOptionModal] = useState(false)
-  const [confirmProductModal, setConfirmProductModal] = useState(false)
-  const [confirmOptionModal, setConfirmOptionModal] = useState(false)
   
+  const [editOptionModal, setEditOptionModal] = useState(false)
+  const [confirmOptionModal, setConfirmOptionModal] = useState(false)
+
   const [newOptionModal, setNewOptionModal] = useState(false)
   const [productsForSelect, setProductsForSelect] = useState([])
   const [selectedProductForSelect, setSelectedProductForSelect] = useState(null)
-
-  const handleChangeProductName = (e) => {
-    const product = { ...selectedProduct, name: e.target.value }
-    setSelectedProduct(product)
-  }
 
   const handleChangeOptionName = (e) => {
     const option = { ...selectedOption, name: e.target.value }
@@ -63,17 +58,6 @@ export const ProductTable = (props) => {
   const handleChangeBalance = (e) => {
     const option = { ...selectedOption, balance: e.target.value }
     setSelectedOption(option)
-  }
-
-  const updateProduct = async () => {
-    setLoading(true)
-    await fetchPostJSON('/api/updateProduct', {
-      product: { id: selectedProduct.id, name: selectedProduct.name },
-    })
-
-    setLoading(false)
-    setEditProductModal(false)
-    router.reload()
   }
 
   const updateOption = async () => {
@@ -103,17 +87,6 @@ export const ProductTable = (props) => {
       setNewOptionModal(false)
       router.reload()
     }
-  }
-
-  const deleteProduct = async () => {
-    setLoading(true)
-    await fetchPostJSON('/api/updateProduct', {
-      product: { id: selectedProduct.id, isDeleted: true },
-    })
-
-    setLoading(false)
-    setConfirmProductModal(false)
-    router.reload()
   }
 
   const deleteOption = async () => {
@@ -194,7 +167,7 @@ export const ProductTable = (props) => {
       </div>
       <div className="flex justify-end items-center mt-4">
         <button
-          className="px-4 py-2 border rounded-md"
+          className="px-4 py-2 border rounded-md ml-4"
           onClick={() => {
             setNewOptionModal(true)
             setSelectedProductForSelect(null)
@@ -220,7 +193,8 @@ export const ProductTable = (props) => {
               ?.filter((e) => e.isDeleted === false)
               .map((product) => {
                 const isOptionsExisted = product.options.filter((e) => e.isDeleted === false).length > 0
-                if (isOptionsExisted) {//product having options
+                if (isOptionsExisted) {
+                  //product having options
                   return product.options
                     .filter((e) => e.isDeleted === false)
                     .map((option) => {
@@ -250,60 +224,11 @@ export const ProductTable = (props) => {
                         </tr>
                       )
                     })
-                } else {//only product
-                  key++
-                  return (
-                    <tr key={product.id} className="hover:bg-gray-100 border-b border-gray-200 py-10">
-                      <td className="px-4 py-4 capitalize">{key}</td>
-                      <td className="px-4 py-4 capitalize">{product.name}</td>
-                      <td className="px-4 py-4 capitalize">{}</td>
-                      <td className="px-4 py-4">{}</td>
-                      <td className="px-4 py-4 flex">
-                        <BiEdit
-                          onClick={() => {
-                            setEditProductModal(true)
-                            setSelectedProduct(product)
-                          }}
-                          className="cursor-pointer mr-2"
-                        />
-                        {/* <BiTrash
-                          onClick={() => {
-                            setConfirmProductModal(true)
-                            setSelectedProduct(product)
-                          }}
-                          className="cursor-pointer"
-                        /> */}
-                      </td>
-                    </tr>
-                  )
                 }
               })}
           </tbody>
         </table>
       </div>
-
-      {editProductModal && (
-        <Modal setOpenModal={setEditProductModal}>
-          <span className="">Update Product's Name</span>
-          <div className="border mt-6">
-            <input
-              id="product-name"
-              className="w-full py-2 px-3 rounded text-gray-800"
-              name="product-name"
-              type="text"
-              placeholder="product name"
-              value={selectedProduct?.name}
-              onChange={handleChangeProductName}
-            />
-          </div>
-          <button
-            className={`bg-blue-700 hover:bg-blue-500 px-4 py-2 rounded-md text-white mt-6`}
-            onClick={updateProduct}
-          >
-            Submit
-          </button>
-        </Modal>
-      )}
 
       {editOptionModal && (
         <Modal setOpenModal={setEditOptionModal}>
@@ -344,7 +269,7 @@ export const ProductTable = (props) => {
           <span className="">Create New Option</span>
           <div className="mt-6">
             <SelectBox
-              id="type-selector"
+              id="product-selector"
               options={productsForSelect}
               selectedOption={selectedProductForSelect}
               setSelectedOption={setSelectedProductForSelect}
@@ -380,28 +305,6 @@ export const ProductTable = (props) => {
           >
             Submit
           </button>
-        </Modal>
-      )}
-
-      {confirmProductModal && (
-        <Modal setOpenModal={setConfirmProductModal}>
-          <div>
-            <span>Are you sure to delete {selectedProduct.name}?</span>
-            <div className="flex justify-center mt-6">
-              <button
-                className="bg-blue-700 hover:bg-blue-500 px-4 py-2 rounded-md text-white mx-2"
-                onClick={() => setConfirmProductModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-blue-700 hover:bg-blue-500 px-4 py-2 rounded-md text-white mx-2"
-                onClick={() => deleteProduct()}
-              >
-                Yes
-              </button>
-            </div>
-          </div>
         </Modal>
       )}
 

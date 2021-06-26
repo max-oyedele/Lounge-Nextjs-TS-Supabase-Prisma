@@ -51,6 +51,7 @@ model PackageProduct {
   product   Product  @relation(fields: [productId], references: [id])
   productId Int      @map("product_id")
   count     Int      @default(1)
+  isDeleted Boolean  @default(false) @map("is_deleted")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 

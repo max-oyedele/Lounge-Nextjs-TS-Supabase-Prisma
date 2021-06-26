@@ -20,6 +20,11 @@ const MainLayout = (props) => {
       path: '/admin/reports',
     },
     {
+      name: 'Packages',
+      icon: '/icons/menu_products.svg',
+      path: '/admin/packages',
+    },
+    {
       name: 'Products',
       icon: '/icons/menu_products.svg',
       path: '/admin/products',

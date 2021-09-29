@@ -23,4 +23,3 @@ drop policy "Users can insert" on storage.objects;
 create policy "Users can insert" on storage.objects for
 insert
   with check (bucket_id = 'images' and auth.role() = 'authenticated');
- 
